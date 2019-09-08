@@ -1,0 +1,8 @@
+.cache
+.pytest_cache
+.ansible-vault-password
+*.retry
+/.idea
+/.vagrant
+__pycache__
+/pubkey.pem
