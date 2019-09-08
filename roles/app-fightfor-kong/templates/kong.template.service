@@ -1,0 +1,17 @@
+[Unit]
+Description=kong service
+After=syslog.target network.target
+
+[Service]
+User=root
+Type=forking
+LimitAS=infinity
+LimitRSS=infinity
+LimitCORE=infinity
+LimitNOFILE=4096
+ExecStart=/usr/local/bin/kong start --conf {{ system.directories.config }}/kong.conf
+ExecReload=/usr/local/bin/kong reload --conf {{ system.directories.config }}/kong.conf
+ExecStop=/usr/local/bin/kong stop
+
+[Install]
+WantedBy=multi-user.target
