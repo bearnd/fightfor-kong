@@ -1,0 +1,179 @@
+---
+
+- name: Update apt cache.
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+  ignore_errors: true
+  become: true
+
+- name: Add the Kong apt repository to sources.
+  apt_repository:
+    repo: deb https://kong.bintray.com/kong-deb xenial main
+    state: present
+    update_cache: yes
+
+- name: Add the Kong apt signing key.
+  apt_key:
+    url: https://bintray.com/user/downloadSubjectPublicKey?username=bintray
+    state: present
+
+- name: Update apt cache to ensure that the Kong key is taken into account.
+  apt:
+    update_cache: yes
+  ignore_errors: true
+  become: true
+
+- name: Install apt dependencies.
+  apt:
+    name: "{{ dependencies.apt }}"
+    state: present
+  become: true
+
+- name: Increase the limit to the number of open files to 16384
+  pam_limits:
+    backup: yes
+    domain: "*"
+    limit_item: nofile
+    limit_type: hard
+    use_max: yes
+    value: "16384"
+
+- name: Create service group.
+  group:
+    state: present
+    name: "{{ system.group }}"
+  become: true
+
+- name: Create service user.
+  user:
+    state: present
+    name: "{{ system.user }}"
+    createhome: yes
+    group: "{{ system.group }}"
+    shell: "/bin/false"
+  become: true
+
+- name: Create application directories.
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ system.user }}"
+    mode: 0755
+  with_items:
+    - "{{ system.directories.config }}"
+    - "{{ system.directories.share }}"
+    - "{{ system.directories.run }}"
+    - "{{ system.directories.log }}"
+  become: true
+
+- name: Create .ssh directory (Production)
+  file:
+    state: directory
+    path: "/home/{{ system.user }}/.ssh"
+    owner: "{{ system.user }}"
+    mode: 0600
+  become: true
+  when: is_vagrant is not defined or is_vagrant == False
+
+- name: Upload public deployment key (Production)
+  copy:
+    src: "deployment_key.public"
+    dest: "/home/{{ system.user }}/.ssh/deployment_key.public"
+    owner: "{{ system.user }}"
+    mode: 0600
+  when: is_vagrant is not defined or is_vagrant == False
+
+- name: Upload private deployment key (Production)
+  copy:
+    src: "deployment_key.private"
+    dest: "/home/{{ system.user }}/.ssh/deployment_key.private"
+    owner: "{{ system.user }}"
+    mode: 0600
+  when: is_vagrant is not defined or is_vagrant == False
+
+- name: Checkout the project source code from Git (Production)
+  git:
+    repo: "ssh://git@sunny.diskstation.me/bearnd/fightfor-kong.git"
+    dest: "{{ system.directories.share }}/src"
+    depth: 1
+    force: yes
+    accept_hostkey: true
+    ssh_opts: "-o StrictHostKeyChecking=no  -o Port=30001"
+    key_file: "/home/{{ system.user }}/.ssh/deployment_key.private"
+  when: is_vagrant is not defined or is_vagrant == False
+  become: true
+
+- name: Create `dev` `kong.conf` configuration file (Vagrant).
+  template:
+    src: "kong.template.conf"
+    dest: "{{ system.directories.config }}/kong.conf"
+    owner: "{{ system.user }}"
+    group: "{{ system.group }}"
+    mode: 0600
+  vars:
+    kong: "{{ config.dev.kong }}"
+  become: true
+  become_user: "{{ system.user }}"
+  when: is_vagrant is defined and is_vagrant == True
+
+- name: Create `prod` `kong.conf` configuration file (Production).
+  template:
+    src: "kong.template.conf"
+    dest: "{{ system.directories.config }}/kong.conf"
+    owner: "{{ system.user }}"
+    group: "{{ system.group }}"
+    mode: 0600
+  vars:
+    kong: "{{ config.prod.kong }}"
+  become: true
+  become_user: "{{ system.user }}"
+  when: is_vagrant is not defined or is_vagrant == False
+
+- name: Create `dev` `kong.yml` configuration file (Vagrant).
+  template:
+    src: "kong.template.yml"
+    dest: "{{ system.directories.config }}/kong.yml"
+    owner: "{{ system.user }}"
+    group: "{{ system.group }}"
+    mode: 0600
+  vars:
+    auth0: "{{ config.dev.auth0 }}"
+    mapbox: "{{ config.dev.mapbox }}"
+  become: true
+  become_user: "{{ system.user }}"
+  when: is_vagrant is defined and is_vagrant == True
+
+- name: Create `prod` `kong.conf` configuration file (Production).
+  template:
+    src: "kong.template.conf"
+    dest: "{{ system.directories.config }}/kong.conf"
+    owner: "{{ system.user }}"
+    group: "{{ system.group }}"
+    mode: 0600
+  vars:
+    auth0: "{{ config.prod.auth0 }}"
+    mapbox: "{{ config.prod.mapbox }}"
+  become: true
+  become_user: "{{ system.user }}"
+  when: is_vagrant is not defined or is_vagrant == False
+
+- name: Create systemd `prod` service file (Production).
+  template:
+    src: "kong.template.service"
+    dest: "/etc/systemd/system/{{ project.name }}.service"
+    owner: "{{ system.user }}"
+    group: "{{ system.group }}"
+    mode: 0600
+  become: true
+  when: is_vagrant is not defined or is_vagrant == False
+
+- name: Restart `fightfor-kong`, in all cases, also issue daemon-reload to
+        pick up config changes.
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: "{{ project.name }}"
+    enabled: true
+  become: true
+  when: is_vagrant is not defined or is_vagrant == False

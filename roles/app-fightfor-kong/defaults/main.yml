@@ -1,0 +1,8 @@
+---
+
+dependencies:
+  apt:
+    - git
+    - htop
+    - build-essential
+    - kong=1.2.0

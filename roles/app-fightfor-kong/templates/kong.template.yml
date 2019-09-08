@@ -1,0 +1,77 @@
+---
+
+_format_version: "1.1"
+
+services:
+  - name: fightfor-graphql
+    url: "http://localhost:5555"
+    routes:
+      - name: root
+        paths:
+          - /fightfor-graphql
+    plugins:
+      - name: jwt
+  - name: braintree-gateway
+    url: "http://localhost:5556"
+    routes:
+      - name: root
+        paths:
+          - /braintree-gateway
+    plugins:
+      - name: jwt
+  - name: mapbox
+    url: "https://api.mapbox.com"
+    routes:
+      - name: root
+        paths:
+          - /
+    plugins:
+      - name: jwt
+
+plugins:
+  # Use the `request-transformer` plugin to append the `access_token` argument
+  # and its value to every request made to the mapbox API.
+- name: request-transformer
+  service: mapbox
+  config:
+    add:
+      querystring:
+      - "access_token:{{ mapbox.access_token }}"
+  # Use the `rate-limiting` plugin to define rate-limit to the different
+  # services.
+- name: rate-limiting
+  service: mapbox
+  config:
+    second: 5
+    limit_by: ip
+    policy: local
+- name: rate-limiting
+  service: fightfor-graphql
+  config:
+    second: 20
+    limit_by: ip
+    policy: local
+- name: rate-limiting
+  service: braintree-gateway
+  config:
+    second: 20
+    limit_by: ip
+    policy: local
+
+consumers:
+  - username: "fightfor"
+
+jwt_secrets:
+  - consumer: "fightfor"
+    key: "{{ auth0.key }}"
+    algorithm: "RS256"
+    rsa_public_key: |-
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmSo9TSYdd+CpA+B+IEPx
+      bxsmw4yRmywexPALu7I6KFYNPSGI/ohkyZ0GAJ/eCdvEZK6mlWVL1fs/xNJcQ4tr
+      sF/DYUCK+TOYv7XdwlRykjTnj3O9aOMqPst65UeDjwNCOdefGjU21jawdu6IECX3
+      HhYTxH+SWpZ+6vLEDDfC6UDJLu+JbUvNzTvZv4GG8ZPm4/27mmpQzBmLU2dNWe3n
+      ceKhRaVhnBPPKu6ga2LZUm/tzi1U12ZCGlc0BdmsFAKH5QCFSA2AQzuiyndjSTZK
+      xyW7rZ8G4uGWmD2RTmBBdXhYJDt0j0Y+d0K28bDNmwi7lwItvu3AP6YEUPxm/e9u
+      eQIDAQAB
+      -----END PUBLIC KEY-----

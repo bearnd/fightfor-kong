@@ -1,0 +1,80 @@
+---
+
+# Auth0 variables.
+auth0_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32386364666465323536393137376236643665313365643136366637363630373832616337633130
+          3034656364613364363332313432343838356165643433610a336564396166323131636439363331
+          30383461653234343332666539313937366462653130396133336465353738663363663339666263
+          6361396264373063300a613536343662336637643362643632393034643136346565393136363062
+          62623933643632333136656236616138333236373162633362393764653838626338
+
+# MapBox variables.
+mapbox_access_token: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          35356337623565306362386535356461376662363632653034366362636138376333633361363238
+          6463633832653334623566393064313731646332643261660a656535663032386631383838366239
+          38393763643931303565396637313763373830336138333832616661333831383130623264303430
+          3930323666353934380a363535376462663761393934636633393931333863323065636134326564
+          33383032653362666330656230663764376264383236393239303262643538393030313430663234
+          37303233336164646130326631663338653764386235376363633530343231303438353839356562
+          64343161373732663436313230316430653436346666326537653838356261623830383430353132
+          34356633306364313262633938343435303938376166333536643930303865656232343466633731
+          6539
+
+project:
+  name: "fightfor-kong"
+
+system:
+  # User name.
+  user: "ffkong"
+  # User group.
+  group: "ffkong"
+  # Application directories.
+  directories:
+    config: "/etc/{{ project.name }}"
+    share: "/usr/local/share/{{ project.name }}"
+    run: "/var/run/{{ project.name }}"
+    log: "/var/log/{{ project.name }}"
+
+# Application Configuration Settings.
+config:
+  dev:
+    # Kong configuration settings.
+    kong:
+      proxy:
+        listen:
+          http: "0.0.0.0:80"
+          https: "0.0.0.0:443"
+      admin:
+        listen:
+          http: "0.0.0.0:8001"
+          https: "0.0.0.0:8044"
+
+    # Auth0 configuration settings.
+    auth0:
+      key: "{{ auth0_key }}"
+
+    # MapBox configuration settings.
+    mapbox:
+      access_token: "{{ mapbox_access_token }}"
+
+  prod:
+    # Kong configuration settings.
+    kong:
+      proxy:
+        listen:
+          http: "0.0.0.0:80"
+          https: "0.0.0.0:443"
+      admin:
+        listen:
+          http: "0.0.0.0:8001"
+          https: "0.0.0.0:8044"
+
+    # Auth0 configuration settings.
+    auth0:
+      key: "{{ auth0_key }}"
+
+    # MapBox configuration settings.
+    mapbox:
+      access_token: "{{ mapbox_access_token }}"
