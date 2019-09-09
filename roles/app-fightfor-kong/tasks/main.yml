@@ -30,15 +30,6 @@
     state: present
   become: true
 
-- name: Increase the limit to the number of open files to 16384
-  pam_limits:
-    backup: yes
-    domain: "*"
-    limit_item: nofile
-    limit_type: hard
-    use_max: yes
-    value: "16384"
-
 - name: Create service group.
   group:
     state: present
@@ -144,10 +135,10 @@
   become_user: "{{ system.user }}"
   when: is_vagrant is defined and is_vagrant == True
 
-- name: Create `prod` `kong.conf` configuration file (Production).
+- name: Create `prod` `kong.yml` configuration file (Production).
   template:
-    src: "kong.template.conf"
-    dest: "{{ system.directories.config }}/kong.conf"
+    src: "kong.template.yml"
+    dest: "{{ system.directories.config }}/kong.yml"
     owner: "{{ system.user }}"
     group: "{{ system.group }}"
     mode: 0600
