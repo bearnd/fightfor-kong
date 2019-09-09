@@ -9,24 +9,18 @@ services:
       - name: fightfor-graphql
         paths:
           - /fightfor-graphql
-    plugins:
-      - name: jwt
   - name: braintree-gateway
     url: "http://localhost:5556"
     routes:
       - name: braintree-gateway
         paths:
           - /braintree-gateway
-    plugins:
-      - name: jwt
   - name: mapbox
     url: "https://api.mapbox.com"
     routes:
       - name: mapbox
         paths:
           - /
-    plugins:
-      - name: jwt
 
 plugins:
   # Use the `request-transformer` plugin to append the `access_token` argument
@@ -57,6 +51,11 @@ plugins:
     second: 20
     limit_by: ip
     policy: local
+- name: jwt
+  config:
+    claims_to_verify:
+    - exp
+    - nbf
 
 consumers:
   - username: "fightfor"
