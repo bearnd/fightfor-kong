@@ -6,7 +6,7 @@ services:
   - name: fightfor-graphql
     url: "http://localhost:5555"
     routes:
-      - name: root
+      - name: fightfor-graphql
         paths:
           - /fightfor-graphql
     plugins:
@@ -14,7 +14,7 @@ services:
   - name: braintree-gateway
     url: "http://localhost:5556"
     routes:
-      - name: root
+      - name: braintree-gateway
         paths:
           - /braintree-gateway
     plugins:
@@ -22,7 +22,7 @@ services:
   - name: mapbox
     url: "https://api.mapbox.com"
     routes:
-      - name: root
+      - name: mapbox
         paths:
           - /
     plugins:
