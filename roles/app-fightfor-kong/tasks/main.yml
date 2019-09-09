@@ -30,15 +30,6 @@
     state: present
   become: true
 
-- name: Increase the limit to the number of open files to 16384
-  pam_limits:
-    backup: yes
-    domain: "*"
-    limit_item: nofile
-    limit_type: hard
-    use_max: yes
-    value: "16384"
-
 - name: Create service group.
   group:
     state: present
