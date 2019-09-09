@@ -1,5 +1,13 @@
 ## Changelog
 
+### v0.2.0
+
+Issue No. 301: Route-matching not working:
+
+- Renamed the different routes to match the service name.
+- Moved the JWT plugin configuration to the global scope.
+- Changed the `mapbox` service route path.
+
 ### v0.1.1
 
 - Removed the `nofile` limit increase as it is defined in the `fightfor-kong` systemd service.
