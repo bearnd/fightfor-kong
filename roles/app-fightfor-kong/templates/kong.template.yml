@@ -20,7 +20,7 @@ services:
     routes:
       - name: mapbox
         paths:
-          - /
+          - /mapbox
 
 plugins:
   # Use the `request-transformer` plugin to append the `access_token` argument
