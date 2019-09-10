@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.3.0
+
+- Updated `kong` configuration and enabled the CORS plugin.
+
 ### v0.2.1
 
 - Removed the `nbf` validation from the JWT as it seems to be erroring out with the Auth0 JWT tokens.
