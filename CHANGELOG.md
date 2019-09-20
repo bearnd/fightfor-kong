@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.5.0
+
+- Story No. 883: Add Let's Encrypt certificate with cron'ed renewal.
+
 ### v0.4.0
 
 - Story No. 1111: Switch `fightfor-kong` Git deployment to GitLab.com.
