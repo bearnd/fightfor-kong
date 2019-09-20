@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.4.0
+
+- Story No. 1111: Switch `fightfor-kong` Git deployment to GitLab.com.
+- Story No. 1239: an upstream response is buffered to a temporary file.
+
 ### v0.3.0
 
 - Updated `kong` configuration and enabled the CORS plugin.
