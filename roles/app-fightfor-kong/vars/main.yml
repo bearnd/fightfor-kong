@@ -22,6 +22,16 @@ mapbox_access_token: !vault |
   34356633306364313262633938343435303938376166333536643930303865656232343466633731
   6539
 
+# Clubhouse variables.
+clubhouse_access_token: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  62303938393063353137363539363637346263336362666534343238306434323438383963663532
+  6438616362336466376664363738363734656132306233310a316434363934313530346433313232
+  64303636303838383861333939633330346630616562643030306538623739313131343038373037
+  6161663864626266660a616264343537653537643130383662353430363662313663333836303738
+  30393332393264386635393236313662303464663930646138623835353730646664313666656661
+  3764326365646331383439663236383038363566326364646631
+
 # GitLab variables.
 gitlab_deploy_token_username: "fightfor-kong-deployer"
 gitlab_deploy_token_password: !vault |
@@ -69,6 +79,10 @@ config:
     mapbox:
       access_token: "{{ mapbox_access_token }}"
 
+    # Clubhouse configuration settings.
+    clubhouse:
+      access_token: "{{ clubhouse_access_token }}"
+
   prod:
     # Kong configuration settings.
     kong:
@@ -88,3 +102,7 @@ config:
     # MapBox configuration settings.
     mapbox:
       access_token: "{{ mapbox_access_token }}"
+
+    # Clubhouse configuration settings.
+    clubhouse:
+      access_token: "{{ clubhouse_access_token }}"
