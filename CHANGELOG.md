@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.6.1
+
+- [ch1617]: Updated the`clubhouse` service where if the `Authorization` header was forwarded it would cause 401s from `api.clubhouse.io`. The header is now removed prior to hitting the upstream servers.
+
 ### v0.6.0
 
 - Story No. 1617: Add Clubhouse service.
