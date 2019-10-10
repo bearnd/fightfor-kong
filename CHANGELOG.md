@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.6.0
+
+- Story No. 1617: Add Clubhouse service.
+
 ### v0.5.0
 
 - Story No. 883: Add Let's Encrypt certificate with cron'ed renewal.
