@@ -38,13 +38,18 @@ plugins:
         querystring:
           - "access_token:{{ mapbox.access_token }}"
   # Use the `request-transformer` plugin to append the `token` argument and its
-  # value to every request made to the clubhouse API.
+  # value to every request made to the clubhouse API. Also remove the original
+  # `Authorization` header as it gets picked up by `api.clubhouse.io` and deems
+  # the request to be invalid if present.
   - name: request-transformer
     service: clubhouse
     config:
       add:
         querystring:
           - "token:{{ clubhouse.access_token }}"
+      remove:
+        headers:
+          - "Authorization"
   # Use the `rate-limiting` plugin to define rate-limit to the different
   # services.
   - name: rate-limiting
