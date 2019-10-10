@@ -104,6 +104,7 @@
   vars:
     auth0: "{{ config.dev.auth0 }}"
     mapbox: "{{ config.dev.mapbox }}"
+    clubhouse: "{{ config.dev.clubhouse }}"
   become: true
   become_user: "{{ system.user }}"
   when: is_vagrant is defined and is_vagrant == True
@@ -118,6 +119,7 @@
   vars:
     auth0: "{{ config.prod.auth0 }}"
     mapbox: "{{ config.prod.mapbox }}"
+    clubhouse: "{{ config.prod.clubhouse }}"
   become: true
   become_user: "{{ system.user }}"
   when: is_vagrant is not defined or is_vagrant == False
