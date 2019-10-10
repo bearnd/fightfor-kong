@@ -25,37 +25,37 @@ services:
 plugins:
   # Use the `request-transformer` plugin to append the `access_token` argument
   # and its value to every request made to the mapbox API.
-- name: request-transformer
-  service: mapbox
-  config:
-    add:
-      querystring:
-      - "access_token:{{ mapbox.access_token }}"
+  - name: request-transformer
+    service: mapbox
+    config:
+      add:
+        querystring:
+          - "access_token:{{ mapbox.access_token }}"
   # Use the `rate-limiting` plugin to define rate-limit to the different
   # services.
-- name: rate-limiting
-  service: mapbox
-  config:
-    second: 5
-    limit_by: ip
-    policy: local
-- name: rate-limiting
-  service: fightfor-graphql
-  config:
-    second: 20
-    limit_by: ip
-    policy: local
-- name: rate-limiting
-  service: braintree-gateway
-  config:
-    second: 20
-    limit_by: ip
-    policy: local
-- name: jwt
-  config:
-    claims_to_verify:
-    - exp
-- name: cors
+  - name: rate-limiting
+    service: mapbox
+    config:
+      second: 5
+      limit_by: ip
+      policy: local
+  - name: rate-limiting
+    service: fightfor-graphql
+    config:
+      second: 20
+      limit_by: ip
+      policy: local
+  - name: rate-limiting
+    service: braintree-gateway
+    config:
+      second: 20
+      limit_by: ip
+      policy: local
+  - name: jwt
+    config:
+      claims_to_verify:
+        - exp
+  - name: cors
 
 consumers:
   - username: "fightfor"
